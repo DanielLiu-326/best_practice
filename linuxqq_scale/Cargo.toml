@@ -1,0 +1,20 @@
+[package]
+name = "best_practice"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[[bin]]
+name = "gnome_renice"
+path = "src/gnome_renice/main.rs"
+
+[[bin]]
+name = "qq_scale"
+path = "src/qq_scale/main.rs"
+
+
+[dependencies]
+procfs='0.15'
+nix = {version='*', features=['process']}
+clap = {version = "*", features = ["derive"]}
