@@ -19,7 +19,12 @@
  * implied.  In no event shall the authors be liable for any damages arising
  * from the use of this software.
  */
+#ifdef IMPLEMENT_FORK_API
+#    define C_EXPORT       __declspec(dllexport)
+#else
+#    define C_EXPORT       __declspec(dllimport)
+#endif
 
-int fork();
+C_EXPORT int fork();
 
 #endif // WIN_FORK_FORK_H
