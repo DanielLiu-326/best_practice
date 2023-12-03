@@ -1,7 +1,8 @@
 use std::{mem::MaybeUninit, path::Path, process::Command, time::Duration};
 use nix::libc::{sysconf, CPU_SET, CPU_SETSIZE, CPU_ZERO, _SC_NPROCESSORS_ONLN};
 
-const PROC_NAMES: [&'static str; 4] = [
+const PROC_NAMES: [&'static str; 5] = [
+    "gjs",
     "gjs-console",
     "gnome-shell",
     "Xwayland",
@@ -10,8 +11,13 @@ const PROC_NAMES: [&'static str; 4] = [
 
 pub fn execute(exe: &str, args: &[&str]) {
     let res = Command::new(exe).args(args).spawn();
-    if let Result::Err(e) = res {
-        println!("running external executable {} error: {}", exe, e);
+    match res{
+        Ok(mut child) => {
+            let _ = child.wait();
+        }
+        Err(e) => {
+            println!("running external executable {} error: {}", exe, e)
+        }
     }
 }
 
@@ -31,6 +37,9 @@ fn do_renice() {
     let gnome_set = unsafe {
         let mut cpu_set = MaybeUninit::zeroed().assume_init();
         CPU_ZERO(&mut cpu_set);
+        // for cpu in 0..cpu_count {
+        //     CPU_SET(cpu, &mut cpu_set);
+        // }
         CPU_SET(gnome_cpu, &mut cpu_set);
         cpu_set
     };

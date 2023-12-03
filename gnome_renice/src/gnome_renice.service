@@ -2,12 +2,13 @@
 Description=Set the affinity and nice of gnome processes
 After=network.target
 StartLimitIntervalSec=0
+User=root
 
 [Service]
 Type=simple
 Restart=always
 RestartSec=1
-User=danny
+User=root
 ExecStart=/opt/manually_install/gnome_renice
 
 [Install]
