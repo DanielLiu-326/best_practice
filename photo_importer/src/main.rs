@@ -1,9 +1,8 @@
 use std::{error::Error, fs, io, path::{Path, PathBuf}};
-use std::fmt::{Debug, Display, Formatter};
 use std::io::Write;
 use chrono::NaiveDateTime;
 use rexiv2::{LogLevel, Metadata};
-use exiftool::{ExifTool, ExifToolError};
+use exiftool::ExifTool;
 use walkdir::WalkDir;
 
 fn scan_photos(path:&Path) -> Vec<PathBuf>{
@@ -34,7 +33,6 @@ fn scan_photos(path:&Path) -> Vec<PathBuf>{
 
     ret
 }
-
 
 fn ask_if_continue(question:&str, default:bool) -> bool {
     let options = if default{ "[Y/n]" } else{ "[y/N]" };
@@ -86,15 +84,8 @@ fn main() -> Result<(), Box<dyn Error>> {
     for (idx, entry) in photos.iter().enumerate()
     {
         let left_adjust = total_count_str.len();
-        print!("[{idx:left_adjust$}/{}] ", total_count_str);
+        print!("[{:left_adjust$}/{}] ",idx + 1 , total_count_str);
         let path = entry.as_path();
-
-        // 检查支持的图片格式
-        let ext = path
-            .extension()
-            .and_then(|e| e.to_str())
-            .map(|e| e.to_lowercase())
-            .unwrap_or_default();
 
         // 获取拍摄时间
         let date_time = match get_date_taken(path) {
@@ -135,17 +126,6 @@ fn main() -> Result<(), Box<dyn Error>> {
     Ok(())
 }
 
-#[derive(Debug)]
-struct DateNotFoundInExif;
-
-impl Display for DateNotFoundInExif {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        Debug::fmt(self, f)
-    }
-}
-
-impl Error for DateNotFoundInExif {}
-
 fn get_date_taken(path: &Path) -> Result<NaiveDateTime, Box<dyn Error>> {
     // 加载元数据
     let metadata = Metadata::new_from_path(path)?;
@@ -158,7 +138,6 @@ fn get_date_taken(path: &Path) -> Result<NaiveDateTime, Box<dyn Error>> {
 
     Ok(NaiveDateTime::parse_from_str(&datetime_str, "%Y:%m:%d %H:%M:%S")?)
 }
-
 
 #[test]
 fn test(){
