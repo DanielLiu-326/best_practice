@@ -1,0 +1,10 @@
+[package]
+name = "photo_importer"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+rexiv2 = "0.10.0"
+exiftool = "0.2.3"
+walkdir = "2.3"
+chrono = "0.4"
